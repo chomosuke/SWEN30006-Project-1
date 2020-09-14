@@ -1,0 +1,2 @@
+should constructor be included in design model (assuming no)
+in domain model the tube what should we do different type or two classes
