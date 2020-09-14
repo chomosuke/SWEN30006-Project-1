@@ -1,2 +1,3 @@
 should constructor be included in design model (assuming no)
 in domain model the tube what should we do different type or two classes
+should we include private and protected methods in design model.
