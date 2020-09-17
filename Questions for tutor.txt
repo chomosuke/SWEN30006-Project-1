@@ -7,3 +7,5 @@ should we include private and protected methods in design model.
 if a variable in not final (but it is static) but for some reason it's name is still capital should it's name be capital in UML.
 
 does subclass need to include the interface from super class in design model.
+
+association only when no reference?
