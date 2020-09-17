@@ -1,4 +1,9 @@
-should constructor be included in design model (assuming no)
+should constructor be included in design model (assuming no).
+
 in domain model the tube what should we do different type or two classes
+
 should we include private and protected methods in design model.
+
 if a variable in not final (but it is static) but for some reason it's name is still capital should it's name be capital in UML.
+
+does subclass need to include the interface from super class in design model.
