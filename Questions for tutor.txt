@@ -9,3 +9,6 @@ if a variable in not final (but it is static) but for some reason it's name is s
 does subclass need to include the interface from super class in design model.
 
 association only when no reference? IE what's the differences between empty diamond and arrow.
+just don't use aggregation.
+
+a lot of thing just like NO ONE knows....
