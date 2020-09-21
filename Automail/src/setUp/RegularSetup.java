@@ -40,13 +40,9 @@ public class RegularSetup extends Setup {
 	@Override
 	public MailItem popItem() {
 		MailItem item;
-		if (hand != null) {
-			item = hand;
-			hand = null;
-		} else {
-			item = tube;
-			tube = null;
-		}
+		item = hand;
+		hand = tube;
+		tube = null;
 		return item;
 	}
 	
