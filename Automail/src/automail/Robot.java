@@ -2,6 +2,8 @@ package automail;
 
 import exceptions.ExcessiveDeliveryException;
 import exceptions.ItemTooHeavyException;
+import setUp.RegularSetup;
+import setUp.Setup;
 import simulation.Building;
 import simulation.Clock;
 import simulation.IMailDelivery;
@@ -26,8 +28,7 @@ public class Robot {
     private MailPool mailPool;
     private boolean receivedDispatch;
     
-    private MailItem deliveryItem = null;
-    private MailItem tube = null;
+    private Setup setup = new RegularSetup();
     
     private int deliveryCounter;
     
@@ -67,10 +68,10 @@ public class Robot {
     		case RETURNING:
     			/** If its current position is at the mailroom, then the robot should change state */
                 if(current_floor == Building.MAILROOM_LOCATION){
-                	if (tube != null) {
-                		mailPool.addToPool(tube);
-                        System.out.printf("T: %3d > old addToPool [%s]%n", Clock.Time(), tube.toString());
-                        tube = null;
+                	if (!setup.isEmpty()) {
+                		MailItem item = setup.popItem();
+                		mailPool.addToPool(item);
+                        System.out.printf("T: %3d > old addToPool [%s]%n", Clock.Time(), item.toString());
                 	}
         			/** Tell the sorter the robot is ready */
         			mailPool.registerWaiting(this);
@@ -92,20 +93,18 @@ public class Robot {
     		case DELIVERING:
     			if(current_floor == destination_floor){ // If already here drop off either way
                     /** Delivery complete, report this to the simulator! */
+    				MailItem deliveryItem = setup.popItem();
                     delivery.deliver(deliveryItem);
-                    deliveryItem = null;
                     deliveryCounter++;
                     if(deliveryCounter > 2){  // Implies a simulation bug
                     	throw new ExcessiveDeliveryException();
                     }
                     /** Check if want to return, i.e. if there is no item in the tube*/
-                    if(tube == null){
+                    if(setup.isEmpty()){
                     	changeState(RobotState.RETURNING);
                     }
                     else{
                         /** If there is another item, set the robot's route to the location to deliver the item */
-                        deliveryItem = tube;
-                        tube = null;
                         setDestination();
                         changeState(RobotState.DELIVERING);
                     }
@@ -122,7 +121,7 @@ public class Robot {
      */
     private void setDestination() {
         /** Set the destination floor */
-        destination_floor = deliveryItem.getDestFloor();
+        destination_floor = setup.getDestination();
     }
 
     /**
@@ -138,7 +137,7 @@ public class Robot {
     }
     
     private String getIdTube() {
-    	return String.format("%s(%1d)", this.id, (tube == null ? 0 : 1));
+    	return String.format("%s(%1d)", this.id, setup.getNumOfItemInTube());
     }
     
     /**
@@ -146,19 +145,16 @@ public class Robot {
      * @param nextState the state to which the robot is transitioning
      */
     private void changeState(RobotState nextState){
-    	assert(!(deliveryItem == null && tube != null));
+    	// assert(!(deliveryItem == null && tube != null));
+    	// the case where this assertion will fail has disappeared
     	if (current_state != nextState) {
             System.out.printf("T: %3d > %7s changed from %s to %s%n", Clock.Time(), getIdTube(), current_state, nextState);
     	}
     	current_state = nextState;
     	if(nextState == RobotState.DELIVERING){
-            System.out.printf("T: %3d > %7s-> [%s]%n", Clock.Time(), getIdTube(), deliveryItem.toString());
+            System.out.printf("T: %3d > %7s-> [%s]%n", Clock.Time(), getIdTube(), setup.getItem().toString());
     	}
     }
-
-	public MailItem getTube() {
-		return tube;
-	}
     
 	static private int count = 0;
 	static private Map<Integer, Integer> hashMap = new TreeMap<Integer, Integer>();
@@ -172,19 +168,22 @@ public class Robot {
 //	}
 
 	public boolean isEmpty() {
-		return (deliveryItem == null && tube == null);
+		return setup.isEmpty();
 	}
 
 	public void addToHand(MailItem mailItem) throws ItemTooHeavyException {
-		assert(deliveryItem == null);
-		deliveryItem = mailItem;
-		if (deliveryItem.weight > INDIVIDUAL_MAX_WEIGHT) throw new ItemTooHeavyException();
+		addToSetup(mailItem);
 	}
 
 	public void addToTube(MailItem mailItem) throws ItemTooHeavyException {
-		assert(tube == null);
-		tube = mailItem;
-		if (tube.weight > INDIVIDUAL_MAX_WEIGHT) throw new ItemTooHeavyException();
+		addToSetup(mailItem);
+	}
+	
+	private void addToSetup(MailItem mailItem) throws ItemTooHeavyException {
+		assert(!setup.isFull());
+		MailItem deliveryItem = mailItem;
+		if (deliveryItem.weight > INDIVIDUAL_MAX_WEIGHT) throw new ItemTooHeavyException();
+		setup.loadItem(deliveryItem);
 	}
 
 }

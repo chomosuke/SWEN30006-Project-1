@@ -4,6 +4,7 @@ import java.util.*;
 
 import automail.MailItem;
 import automail.MailPool;
+import automail.RegularItem;
 
 /**
  * This class generates the mail
@@ -61,7 +62,7 @@ public class MailGenerator {
         	(allMail.containsKey(arrivalTime) &&
         	allMail.get(arrivalTime).stream().anyMatch(e -> PriorityMailItem.class.isInstance(e))))
         {
-        	newMailItem = new MailItem(destinationFloor,arrivalTime,weight);      	
+        	newMailItem = new RegularItem(destinationFloor,arrivalTime,weight);      	
         } else {
         	newMailItem = new PriorityMailItem(destinationFloor,arrivalTime,weight,priorityLevel);
         }

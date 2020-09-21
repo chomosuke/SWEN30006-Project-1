@@ -1,8 +1,8 @@
 package simulation;
 
-import automail.MailItem;
+import automail.RegularItem;
 
-public class PriorityMailItem extends MailItem{
+public class PriorityMailItem extends RegularItem{
 	
 	/** The priority of the mail item from 1 low to 100 high */
     private final int PRIORITY_LEVEL;
