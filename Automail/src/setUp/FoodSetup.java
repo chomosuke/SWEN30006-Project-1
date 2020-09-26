@@ -36,7 +36,6 @@ public class FoodSetup extends Setup {
     public MailItem getItem() {
         MailItem item;
         item = foodTube.get(foodTube.size()-1);
-        foodTube.remove(foodTube.size()-1);
         return item;
     }
 
