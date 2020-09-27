@@ -8,18 +8,20 @@ import java.util.ArrayList;
 
 public class FoodSetup extends Setup {
 
-    private static int SETUPTIME = 5;
-    private static int INITIALTIME = Clock.Time();
-    private static int MAXITEMS = 3;
-    private ArrayList<FoodItem> foodTube;
+    private static final int SETUPTIME = 5;
+    private static final int MAXITEMS = 3;
+    private int initialTime;
+    private final ArrayList<FoodItem> foodTube;
 
     public void loadItem(MailItem item) {
-        if(foodTube == null) {
-            foodTube = new ArrayList<>();
-            foodTube.add((FoodItem) item);
-        } else if(foodTube.size() < MAXITEMS) {
+        if(foodTube.size() < MAXITEMS) {
             foodTube.add((FoodItem) item);
         }
+    }
+
+    public FoodSetup() {
+        initialTime = Clock.Time();
+        foodTube = new ArrayList<>();
     }
 
     @Override
@@ -29,22 +31,25 @@ public class FoodSetup extends Setup {
 
     @Override
     public boolean isEmpty(){
-        return foodTube == null;
+        return foodTube.isEmpty();
     }
 
     @Override
     public MailItem getItem() {
-        MailItem item;
-        item = foodTube.get(foodTube.size()-1);
+        MailItem item = null;
+        if(!foodTube.isEmpty()) {
+            item = foodTube.get(foodTube.size()-1);
+        }
         return item;
     }
 
-    //whats the difference between these methods?
     @Override
     public MailItem popItem() {
-        MailItem item;
-        item = foodTube.get(foodTube.size()-1);
-        foodTube.remove(foodTube.size()-1);
+        MailItem item = null;
+        if(!foodTube.isEmpty()) {
+            item = foodTube.get(foodTube.size()-1);
+            foodTube.remove(foodTube.size()-1);
+        }
         return item;
     }
 
@@ -59,7 +64,7 @@ public class FoodSetup extends Setup {
 
     @Override
     public boolean isReady() {
-        return INITIALTIME - Clock.Time() >= SETUPTIME;
+        return initialTime - Clock.Time() >= SETUPTIME;
     }
 
 }
