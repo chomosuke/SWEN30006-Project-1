@@ -30,7 +30,12 @@ public class Robot {
     
     private Setup setup = new RegularSetup();
     
-    private int deliveryCounter;
+    //new setter for setup
+	public void setSetup(Setup setup) {
+		this.setup = setup;
+	}
+
+	private int deliveryCounter;
     
 
     /**
@@ -170,16 +175,12 @@ public class Robot {
 	public boolean isEmpty() {
 		return setup.isEmpty();
 	}
-
-	public void addToHand(MailItem mailItem) throws ItemTooHeavyException {
-		addToSetup(mailItem);
-	}
-
-	public void addToTube(MailItem mailItem) throws ItemTooHeavyException {
-		addToSetup(mailItem);
-	}
 	
-	private void addToSetup(MailItem mailItem) throws ItemTooHeavyException {
+	public boolean isFull() {
+		return setup.isFull();
+	}
+
+	public void addToSetup(MailItem mailItem) throws ItemTooHeavyException {
 		assert(!setup.isFull());
 		MailItem deliveryItem = mailItem;
 		if (deliveryItem.weight > INDIVIDUAL_MAX_WEIGHT) throw new ItemTooHeavyException();

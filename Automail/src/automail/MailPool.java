@@ -45,13 +45,18 @@ public class MailPool {
 		}
 	}
 	
-	private LinkedList<Item> pool;
+	//private LinkedList<Item> pool;
 	private LinkedList<Robot> robots;
-
+	private LinkedList<Item> FoodItemPool; //new var
+	private LinkedList<Item> RegularItemPool; //new var
+	
+	
 	public MailPool(int nrobots){
 		// Start empty
-		pool = new LinkedList<Item>();
+		//pool = new LinkedList<Item>();
 		robots = new LinkedList<Robot>();
+		FoodItemPool = new LinkedList<Item>();
+		RegularItemPool = new LinkedList<Item>();
 	}
 
 	/**
@@ -60,8 +65,23 @@ public class MailPool {
      */
 	public void addToPool(MailItem mailItem) {
 		Item item = new Item(mailItem);
-		pool.add(item);
-		pool.sort(new ItemComparator());
+		
+		if(mailItem instanceof RegularItem) {
+			
+			RegularItemPool.add(item);
+			
+		}
+		
+		if(mailItem instanceof FoodItem) {
+			
+			FoodItemPool.add(item);
+			
+		}
+		
+		
+		
+		//pool.add(item);
+		//pool.sort(new ItemComparator());
 	}
 	
 	
@@ -80,15 +100,35 @@ public class MailPool {
 		Robot robot = i.next();
 		assert(robot.isEmpty());
 		// System.out.printf("P: %3d%n", pool.size());
-		ListIterator<Item> j = pool.listIterator();
-		if (pool.size() > 0) {
+		
+		
+		//ListIterator<Item> j = pool.listIterator();  // old code
+		
+		
+		//handle all Regular Items First
+		if (RegularItemPool.size() > 0) {
+			//if it's Regular item pool is not empty
+			ListIterator<Item> j = RegularItemPool.listIterator();
+		}else{
+			//if it's food item pool is not empty
+			ListIterator<Item> j = FoodItemPool.listIterator();
+		}
+		
+		
+		
+		if (RegularItemPool.size() > 0 || FoodItemPool.size() > 0) {
+			
+				robot.setSetup( j.next().mailItem.getNewSetup() );
+			
 			try {
-			robot.addToHand(j.next().mailItem); // hand first as we want higher priority delivered first
-			j.remove();
-			if (pool.size() > 0) {
-				robot.addToTube(j.next().mailItem);
-				j.remove();
-			}
+				
+				while( (RegularItemPool.size() > 0 || FoodItemPool.size() > 0)  && !robot.isFull()) {
+					robot.addToSetup(j.next().mailItem); // hand first as we want higher priority delivered first
+					j.remove();
+				}
+				
+				
+
 			robot.dispatch(); // send the robot off if it has any items to deliver
 			i.remove();       // remove from mailPool queue
 			} catch (Exception e) { 

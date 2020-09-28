@@ -4,7 +4,8 @@ import java.util.*;
 
 import automail.MailItem;
 import automail.MailPool;
-import automail.RegularItem;
+import automail.RegularItem; //new
+import automail.FoodItem; //new
 
 /**
  * This class generates the mail
@@ -57,18 +58,43 @@ public class MailGenerator {
         int priorityLevel = generatePriorityLevel();
         int arrivalTime = generateArrivalTime();
         int weight = generateWeight();
-        // Check if arrival time has a priority mail
-        if(	(random.nextInt(6) > 0) ||  // Skew towards non priority mail
-        	(allMail.containsKey(arrivalTime) &&
-        	allMail.get(arrivalTime).stream().anyMatch(e -> PriorityMailItem.class.isInstance(e))))
-        {
-        	newMailItem = new RegularItem(destinationFloor,arrivalTime,weight);      	
-        } else {
-        	newMailItem = new PriorityMailItem(destinationFloor,arrivalTime,weight,priorityLevel);
-        }
-        return newMailItem;
+        
+        
+        //Generate a random number to determine the type of item
+        int random_min = 1;
+        int random_max = 2;
+        int random_int = (int)(Math.random() * (random_max - random_min + 1) + random_min);
+        //System.out.println("random_int = ");
+        //System.out.println(random_int);
+        
+        //Note food item has no priority
+        
+        //check item type
+    	if(random_int == 1) {
+    	//If it's a regular item
+        
+            // Check if arrival time has a priority mail
+            if(	(random.nextInt(6) > 0) ||  // Skew towards non priority mail
+            	(allMail.containsKey(arrivalTime) &&
+            	allMail.get(arrivalTime).stream().anyMatch(e -> PriorityMailItem.class.isInstance(e))))
+            {
+                newMailItem = new RegularItem(destinationFloor,arrivalTime,weight);   
+            } else {
+            	newMailItem = new PriorityMailItem(destinationFloor,arrivalTime,weight,priorityLevel);
+            }
+        
+    	}else{
+    		//If it's a food item
+    		newMailItem = new FoodItem(destinationFloor,arrivalTime,weight);  
+    		//newMailItem = new RegularItem(destinationFloor,arrivalTime,weight); 
+    	}
+    	
+    	return newMailItem;
     }
 
+    
+    
+    
     /**
      * @return a destination floor between the ranges of GROUND_FLOOR to FLOOR
      */

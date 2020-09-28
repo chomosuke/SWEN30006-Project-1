@@ -12,8 +12,10 @@ import java.util.HashMap;
 import java.util.Properties;
 
 import automail.Automail;
+import automail.FoodItem;
 import automail.MailItem;
 import automail.MailPool;
+import automail.RegularItem;
 
 /**
  * This class simulates the behaviour of AutoMail
@@ -27,6 +29,8 @@ public class Simulation {
     
     private static boolean OVERDRIVE_ENABLED;
     private static boolean STATISTICS_ENABLED;
+    
+    private static boolean DELIVER_FOOD_ENABLED; // new var
     
     private static ArrayList<MailItem> MAIL_DELIVERED;
     private static double total_delay = 0;
@@ -135,6 +139,11 @@ public class Simulation {
 		// Robots
 		NUM_ROBOTS = Integer.parseInt(automailProperties.getProperty("Robots"));
 		System.out.print("#Robots: "); System.out.println(NUM_ROBOTS);
+		
+        // DeliverFood Enable
+		DELIVER_FOOD_ENABLED = Boolean.parseBoolean(automailProperties.getProperty("DeliverFood"));
+        System.out.println("DeliverFood enabled: " + DELIVER_FOOD_ENABLED);
+		
 		assert(NUM_ROBOTS > 0);
 		
 		return automailProperties;
@@ -142,13 +151,27 @@ public class Simulation {
     
     static class ReportDelivery implements IMailDelivery {
     	
+    	//initialize
+    	private int  numberOfFoodItemDelivered = 0; //new var
+    	private int  numberOfRegularItemDelivered = 0; //new var
+    	private int  weightOfFoodItemDelivered = 0; //new var
+    	private int  weightOfRegularItemDelivered =0; //new var
+  
+    	
     	/** Confirm the delivery and calculate the total score */
     	public void deliver(MailItem deliveryItem){
+    		
     		if(!MAIL_DELIVERED.contains(deliveryItem)){
     			MAIL_DELIVERED.add(deliveryItem);
                 System.out.printf("T: %3d > Delivered(%4d) [%s]%n", Clock.Time(), MAIL_DELIVERED.size(), deliveryItem.toString());
     			// Calculate delivery score
     			total_delay += calculateDeliveryDelay(deliveryItem);
+    			
+    			
+    			
+    			recordDelivery(deliveryItem); //record Delivery (new)
+    			
+    			
     		}
     		else{
     			try {
@@ -157,8 +180,38 @@ public class Simulation {
     				e.printStackTrace();
     			}
     		}
+    		
+    		
+    		
+    		
+    		
     	}
 
+    	
+    	
+    	
+    	//new method recordDelivery
+    	private void recordDelivery(MailItem deliveryItem) {
+    		
+    		if(deliveryItem instanceof RegularItem) {
+    			
+    			numberOfRegularItemDelivered++;
+    			weightOfRegularItemDelivered += deliveryItem.getWeight();
+    			
+    		}
+    		if(deliveryItem instanceof FoodItem) {
+    			
+    			numberOfFoodItemDelivered++;
+    			weightOfFoodItemDelivered += deliveryItem.getWeight();
+    			
+    		}
+    		
+    		
+    	}
+    	
+    	
+    	
+    	
     }
     
     private static double calculateDeliveryDelay(MailItem deliveryItem) {
@@ -177,4 +230,5 @@ public class Simulation {
         System.out.println("Final Delivery time: "+Clock.Time());
         System.out.printf("Delay: %.2f%n", total_delay);
     }
+    
 }
