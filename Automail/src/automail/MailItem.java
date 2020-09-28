@@ -33,10 +33,8 @@ public abstract class MailItem {
     }
 
     @Override
-    public String toString(){
-        return String.format("Mail Item:: ID: %6s | Arrival: %4d | Destination: %2d | Weight: %4d", id, arrival_time, destination_floor, weight);
-    }
-
+    public abstract String toString();
+    
     /**
      *
      * @return the destination floor of the mail item
