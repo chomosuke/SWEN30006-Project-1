@@ -95,7 +95,7 @@ public class MailPool {
 			loadItem(i);
 	}
 	
-	// start with loading regular item and alternate between the two
+	// start with loading regular item and alternate between the two for each robot
 	private boolean lastRegular = true;
 	//load items to the robot
 	private void loadItem(ListIterator<Robot> i) throws ItemTooHeavyException {
@@ -117,6 +117,10 @@ public class MailPool {
 //			 System.out.printf("P: %3d%n", pool.size());
 			
 			robot.setSetup(setup);
+			// record the setup
+			if (setup instanceof FoodSetup) {
+				numOfTimesFoodTubeIsAttached++;
+			}
 			
 			while(!pool.isEmpty() && !robot.isFull()) {
 				robot.addToSetup(pool.poll().mailItem); // hand first as we want higher priority delivered first
@@ -126,6 +130,12 @@ public class MailPool {
 			i.remove();       // remove from mailPool queue
 		}
 	}
+	
+	private int numOfTimesFoodTubeIsAttached = 0;
+	public int getNumOfTimesFoodTubeIsAttached() {
+		return numOfTimesFoodTubeIsAttached;
+	}
+	
 
 	/**
      * @param robot refers to a robot which has arrived back ready for more mailItems to deliver

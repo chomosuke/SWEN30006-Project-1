@@ -70,7 +70,8 @@ public class Simulation {
          */
         /* Instantiate MailPool and Automail */
      	MailPool mailPool = new MailPool(NUM_ROBOTS);
-        Automail automail = new Automail(mailPool, new ReportDelivery(), NUM_ROBOTS);
+     	ReportDelivery reportDelivery = new ReportDelivery();
+        Automail automail = new Automail(mailPool, reportDelivery, NUM_ROBOTS);
         MailGenerator mailGenerator = new MailGenerator(MAIL_TO_CREATE, MAIL_MAX_WEIGHT, mailPool, seedMap, DELIVER_FOOD_ENABLED);
         
         /** Generate all the mails */
@@ -91,7 +92,7 @@ public class Simulation {
 			}
             Clock.Tick();
         }
-        printResults();
+        printResults(mailPool, reportDelivery);
     }
     
     static private Properties setUpProperties() throws IOException {
@@ -216,10 +217,17 @@ public class Simulation {
         return Math.pow(Clock.Time() - deliveryItem.getArrivalTime(),penalty)*(1+Math.sqrt(priority_weight));
     }
 
-    public static void printResults(){
+    public static void printResults(MailPool mailpool, ReportDelivery reportDelivery) {
         System.out.println("T: "+Clock.Time()+" | Simulation complete!");
         System.out.println("Final Delivery time: "+Clock.Time());
         System.out.printf("Delay: %.2f%n", total_delay);
+        if (STATISTICS_ENABLED) {
+        	System.out.println("Number of regular items delivered: " + reportDelivery.numberOfRegularItemDelivered);
+        	System.out.println("Number of food items delivered: " + reportDelivery.numberOfFoodItemDelivered);
+        	System.out.println("Total weight of the regular items delivered: " + reportDelivery.weightOfRegularItemDelivered);
+        	System.out.println("Total weight of the food items delivered: " + reportDelivery.weightOfFoodItemDelivered);
+        	System.out.println("Number of times a food tube is used: " + mailpool.getNumOfTimesFoodTubeIsAttached());
+        }
     }
     
 }
