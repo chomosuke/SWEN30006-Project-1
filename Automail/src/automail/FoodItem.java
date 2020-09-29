@@ -12,12 +12,4 @@ public class FoodItem extends MailItem {
 	public String toString() {
 		return String.format("Food Item:: ID: %6s | Arrival: %4d | Destination: %2d | Weight: %4d", id, arrival_time, destination_floor, weight);
 	}
-	
-	@Override
-	public Setup getNewSetup() {
-		return new FoodSetup();
-		
-	}
-	
-	
 }

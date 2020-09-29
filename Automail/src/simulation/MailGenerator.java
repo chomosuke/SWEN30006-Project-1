@@ -15,6 +15,8 @@ public class MailGenerator {
     public final int MAIL_TO_CREATE;
     public final int MAIL_MAX_WEIGHT;
     
+    private final boolean DELIVER_FOOD_ENABLED;
+    
     private int mailCreated;
 
     private final Random random;
@@ -32,7 +34,7 @@ public class MailGenerator {
      * @param mailPool where mail items go on arrival
      * @param seed random seed for generating mail
      */
-    public MailGenerator(int mailToCreate, int mailMaxWeight, MailPool mailPool, HashMap<Boolean,Integer> seed){
+    public MailGenerator(int mailToCreate, int mailMaxWeight, MailPool mailPool, HashMap<Boolean,Integer> seed, boolean deliverFoodEnabled){
         if(seed.containsKey(true)){
         	this.random = new Random((long) seed.get(true));
         }
@@ -47,6 +49,8 @@ public class MailGenerator {
         complete = false;
         allMail = new HashMap<Integer,ArrayList<MailItem>>();
         this.mailPool = mailPool;
+        
+        DELIVER_FOOD_ENABLED = deliverFoodEnabled;
     }
 
     /**
@@ -59,35 +63,33 @@ public class MailGenerator {
         int arrivalTime = generateArrivalTime();
         int weight = generateWeight();
         
+        // Check if arrival time has a priority mail
+        if(	(random.nextInt(6) > 0) ||  // Skew towards non priority mail
+           	(allMail.containsKey(arrivalTime) &&
+           	allMail.get(arrivalTime).stream().anyMatch(e -> PriorityMailItem.class.isInstance(e))))
+        {  //check item type
+        	
+        	
+            int random_int; // 1 for regular, 0 for food
+            if (DELIVER_FOOD_ENABLED)
+            	random_int = random.nextInt(2);
+            else
+            	random_int = 1;
+            
+            
+            //Note food item has no priority
+        	if(random_int == 1) {
+        		//If it's a regular item
+        		newMailItem = new RegularItem(destinationFloor,arrivalTime,weight);   
+        	}else{
+        		//If it's a food item
+        		newMailItem = new FoodItem(destinationFloor,arrivalTime,weight);  
+        	}
+        	
+        } else {
+           	newMailItem = new PriorityMailItem(destinationFloor,arrivalTime,weight,priorityLevel);
+        }
         
-        //Generate a random number to determine the type of item
-        int random_min = 1;
-        int random_max = 2;
-        int random_int = (int)(Math.random() * (random_max - random_min + 1) + random_min);
-        //System.out.println("random_int = ");
-        //System.out.println(random_int);
-        
-        //Note food item has no priority
-        
-        //check item type
-    	if(random_int == 1) {
-    	//If it's a regular item
-        
-            // Check if arrival time has a priority mail
-            if(	(random.nextInt(6) > 0) ||  // Skew towards non priority mail
-            	(allMail.containsKey(arrivalTime) &&
-            	allMail.get(arrivalTime).stream().anyMatch(e -> PriorityMailItem.class.isInstance(e))))
-            {
-                newMailItem = new RegularItem(destinationFloor,arrivalTime,weight);   
-            } else {
-            	newMailItem = new PriorityMailItem(destinationFloor,arrivalTime,weight,priorityLevel);
-            }
-        
-    	}else{
-    		//If it's a food item
-    		newMailItem = new FoodItem(destinationFloor,arrivalTime,weight);  
-    		//newMailItem = new RegularItem(destinationFloor,arrivalTime,weight); 
-    	}
     	
     	return newMailItem;
     }

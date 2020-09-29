@@ -79,14 +79,4 @@ public abstract class MailItem {
 		if (hash == null) { hash = count++; hashMap.put(hash0, hash); }
 		return hash;
 	}
-	
-	
-	
-	
-	
-	abstract public Setup getNewSetup();
-	
-	
-	
-	
 }

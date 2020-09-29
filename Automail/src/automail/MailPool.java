@@ -5,6 +5,9 @@ import java.util.Comparator;
 import java.util.ListIterator;
 
 import exceptions.ItemTooHeavyException;
+import setUp.FoodSetup;
+import setUp.RegularSetup;
+import setUp.Setup;
 import simulation.PriorityMailItem;
 
 /**
@@ -47,16 +50,16 @@ public class MailPool {
 	
 	//private LinkedList<Item> pool;
 	private LinkedList<Robot> robots;
-	private LinkedList<Item> FoodItemPool; //new var
-	private LinkedList<Item> RegularItemPool; //new var
+	private LinkedList<Item> foodItemPool; //new var
+	private LinkedList<Item> regularItemPool; //new var
 	
 	
 	public MailPool(int nrobots){
 		// Start empty
 		//pool = new LinkedList<Item>();
 		robots = new LinkedList<Robot>();
-		FoodItemPool = new LinkedList<Item>();
-		RegularItemPool = new LinkedList<Item>();
+		foodItemPool = new LinkedList<Item>();
+		regularItemPool = new LinkedList<Item>();
 	}
 
 	/**
@@ -68,20 +71,16 @@ public class MailPool {
 		
 		if(mailItem instanceof RegularItem) {
 			
-			RegularItemPool.add(item);
+			regularItemPool.add(item);
+			regularItemPool.sort(new ItemComparator());
 			
 		}
 		
 		if(mailItem instanceof FoodItem) {
 			
-			FoodItemPool.add(item);
+			foodItemPool.add(item);
 			
 		}
-		
-		
-		
-		//pool.add(item);
-		//pool.sort(new ItemComparator());
 	}
 	
 	
@@ -92,48 +91,39 @@ public class MailPool {
 	public void loadItemsToRobot() throws ItemTooHeavyException {
 		//List available robots
 		ListIterator<Robot> i = robots.listIterator();
-		while (i.hasNext()) loadItem(i);
+		while (i.hasNext() && (!foodItemPool.isEmpty() || !regularItemPool.isEmpty())) 
+			loadItem(i);
 	}
 	
+	// start with loading regular item and alternate between the two
+	private boolean lastRegular = true;
 	//load items to the robot
 	private void loadItem(ListIterator<Robot> i) throws ItemTooHeavyException {
-		Robot robot = i.next();
-		assert(robot.isEmpty());
-		// System.out.printf("P: %3d%n", pool.size());
 		
+		if (lastRegular)
+			loadItem(i, foodItemPool, new FoodSetup());
+		else
+			loadItem(i, regularItemPool, new RegularSetup());
 		
-		//ListIterator<Item> j = pool.listIterator();  // old code
-		
-		
-		//handle all Regular Items First
-		if (RegularItemPool.size() > 0) {
-			//if it's Regular item pool is not empty
-			ListIterator<Item> j = RegularItemPool.listIterator();
-		}else{
-			//if it's food item pool is not empty
-			ListIterator<Item> j = FoodItemPool.listIterator();
-		}
-		
-		
-		
-		if (RegularItemPool.size() > 0 || FoodItemPool.size() > 0) {
+		lastRegular = !lastRegular;
+	}
+	
+	private void loadItem(ListIterator<Robot> i, LinkedList<Item> pool, Setup setup) throws ItemTooHeavyException {
+		if (!pool.isEmpty()) {
+			//if it's pool is not empty
 			
-				robot.setSetup( j.next().mailItem.getNewSetup() );
+			Robot robot = i.next();
+			assert(robot.isEmpty());
+//			 System.out.printf("P: %3d%n", pool.size());
 			
-			try {
-				
-				while( (RegularItemPool.size() > 0 || FoodItemPool.size() > 0)  && !robot.isFull()) {
-					robot.addToSetup(j.next().mailItem); // hand first as we want higher priority delivered first
-					j.remove();
-				}
-				
-				
-
+			robot.setSetup(setup);
+			
+			while(!pool.isEmpty() && !robot.isFull()) {
+				robot.addToSetup(pool.poll().mailItem); // hand first as we want higher priority delivered first
+			}
+			
 			robot.dispatch(); // send the robot off if it has any items to deliver
 			i.remove();       // remove from mailPool queue
-			} catch (Exception e) { 
-	            throw e; 
-	        } 
 		}
 	}
 

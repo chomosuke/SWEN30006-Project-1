@@ -28,14 +28,14 @@ public class Robot {
     private MailPool mailPool;
     private boolean receivedDispatch;
     
-    private Setup setup = new RegularSetup();
+    private Setup setup;
     
     //new setter for setup
 	public void setSetup(Setup setup) {
 		this.setup = setup;
 	}
 
-	private int deliveryCounter;
+//	private int deliveryCounter;
     
 
     /**
@@ -53,7 +53,7 @@ public class Robot {
         this.delivery = delivery;
         this.mailPool = mailPool;
         this.receivedDispatch = false;
-        this.deliveryCounter = 0;
+//        this.deliveryCounter = 0;
     }
     
     /**
@@ -73,7 +73,7 @@ public class Robot {
     		case RETURNING:
     			/** If its current position is at the mailroom, then the robot should change state */
                 if(current_floor == Building.MAILROOM_LOCATION){
-                	if (!setup.isEmpty()) {
+                	if (!isEmpty()) {
                 		MailItem item = setup.popItem();
                 		mailPool.addToPool(item);
                         System.out.printf("T: %3d > old addToPool [%s]%n", Clock.Time(), item.toString());
@@ -90,22 +90,28 @@ public class Robot {
                 /** If the StorageTube is ready and the Robot is waiting in the mailroom then start the delivery */
                 if(!isEmpty() && receivedDispatch){
                 	receivedDispatch = false;
-                	deliveryCounter = 0; // reset delivery counter
+//                	deliveryCounter = 0; // reset delivery counter
                 	setDestination();
                 	changeState(RobotState.DELIVERING);
                 }
                 break;
     		case DELIVERING:
+    			
+    			if (!setup.isReady()) {
+    				// do nothing as setup isn't ready
+    				return;
+    			}
+    	
     			if(current_floor == destination_floor){ // If already here drop off either way
                     /** Delivery complete, report this to the simulator! */
     				MailItem deliveryItem = setup.popItem();
                     delivery.deliver(deliveryItem);
-                    deliveryCounter++;
-                    if(deliveryCounter > 2){  // Implies a simulation bug
-                    	throw new ExcessiveDeliveryException();
-                    }
+//                    deliveryCounter++;
+//                    if(deliveryCounter > 2){  // Implies a simulation bug
+//                    	throw new ExcessiveDeliveryException();
+//                    }
                     /** Check if want to return, i.e. if there is no item in the tube*/
-                    if(setup.isEmpty()){
+                    if(isEmpty()){
                     	changeState(RobotState.RETURNING);
                     }
                     else{
@@ -142,7 +148,7 @@ public class Robot {
     }
     
     private String getIdTube() {
-    	return String.format("%s(%1d)", this.id, setup.getNumOfItemInTube());
+    	return String.format("%s(%1d)", this.id, setup == null ? 0 : setup.getNumOfItemInTube());
     }
     
     /**
@@ -173,11 +179,11 @@ public class Robot {
 //	}
 
 	public boolean isEmpty() {
-		return setup.isEmpty();
+		return setup == null || setup.isEmpty();
 	}
 	
 	public boolean isFull() {
-		return setup.isFull();
+		return setup != null && setup.isFull();
 	}
 
 	public void addToSetup(MailItem mailItem) throws ItemTooHeavyException {

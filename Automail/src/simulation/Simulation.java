@@ -71,7 +71,7 @@ public class Simulation {
         /* Instantiate MailPool and Automail */
      	MailPool mailPool = new MailPool(NUM_ROBOTS);
         Automail automail = new Automail(mailPool, new ReportDelivery(), NUM_ROBOTS);
-        MailGenerator mailGenerator = new MailGenerator(MAIL_TO_CREATE, MAIL_MAX_WEIGHT, mailPool, seedMap);
+        MailGenerator mailGenerator = new MailGenerator(MAIL_TO_CREATE, MAIL_MAX_WEIGHT, mailPool, seedMap, DELIVER_FOOD_ENABLED);
         
         /** Generate all the mails */
         mailGenerator.generateAllMail();
@@ -167,11 +167,7 @@ public class Simulation {
     			// Calculate delivery score
     			total_delay += calculateDeliveryDelay(deliveryItem);
     			
-    			
-    			
     			recordDelivery(deliveryItem); //record Delivery (new)
-    			
-    			
     		}
     		else{
     			try {
@@ -180,11 +176,6 @@ public class Simulation {
     				e.printStackTrace();
     			}
     		}
-    		
-    		
-    		
-    		
-    		
     	}
 
     	
