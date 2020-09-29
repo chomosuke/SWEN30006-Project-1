@@ -3,8 +3,6 @@ package automail;
 import java.util.Map;
 import java.util.TreeMap;
 
-import setUp.Setup;
-
 // import java.util.UUID;
 
 /**

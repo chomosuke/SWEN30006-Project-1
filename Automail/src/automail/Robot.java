@@ -2,14 +2,13 @@ package automail;
 
 import exceptions.ExcessiveDeliveryException;
 import exceptions.ItemTooHeavyException;
-import setUp.RegularSetup;
 import setUp.Setup;
 import simulation.Building;
 import simulation.Clock;
 import simulation.IMailDelivery;
 
-import java.util.Map;
-import java.util.TreeMap;
+//import java.util.Map;
+//import java.util.TreeMap;
 
 /**
  * The robot delivers mail!
@@ -167,8 +166,8 @@ public class Robot {
     	}
     }
     
-	static private int count = 0;
-	static private Map<Integer, Integer> hashMap = new TreeMap<Integer, Integer>();
+//	static private int count = 0;
+//	static private Map<Integer, Integer> hashMap = new TreeMap<Integer, Integer>();
 
 //	@Override
 //	public int hashCode() {
