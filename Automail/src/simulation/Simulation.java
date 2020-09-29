@@ -140,6 +140,14 @@ public class Simulation {
 		NUM_ROBOTS = Integer.parseInt(automailProperties.getProperty("Robots"));
 		System.out.print("#Robots: "); System.out.println(NUM_ROBOTS);
 		
+
+        // DeliverFood Enable
+		DELIVER_FOOD_ENABLED = Boolean.parseBoolean(automailProperties.getProperty("DeliverFood"));
+        System.out.println("DeliverFood enabled: " + DELIVER_FOOD_ENABLED);
+
+
+		
+		
 		assert(NUM_ROBOTS > 0);
 		
 		return automailProperties;
