@@ -20,7 +20,7 @@ public class Robot {
     IMailDelivery delivery;
     protected final String id;
     /** Possible states the robot can be in */
-    public enum RobotState { DELIVERING, WAITING, RETURNING }
+    public enum RobotState { DELIVERING, WAITING, RETURNING, WAITING_FOR_PERMISSION}
     public RobotState current_state;
     private int current_floor;
     private int destination_floor;
@@ -87,42 +87,53 @@ public class Robot {
                 }
     		case WAITING:
                 /** If the StorageTube is ready and the Robot is waiting in the mailroom then start the delivery */
-                if(!isEmpty() && receivedDispatch){
+                if(!isEmpty() && receivedDispatch && setup.isReady()){
+                	// only start delivering when setup is ready and have permission to delivery to that floor
+                	
                 	receivedDispatch = false;
 //                	deliveryCounter = 0; // reset delivery counter
-                	setDestination();
-                	changeState(RobotState.DELIVERING);
+                	
+                	attemptStartDelivery();
                 }
                 break;
     		case DELIVERING:
-    			
-    			if (!setup.isReady()) {
-    				// do nothing as setup isn't ready
-    				return;
-    			}
-    	
+    				
     			if(current_floor == destination_floor){ // If already here drop off either way
-                    /** Delivery complete, report this to the simulator! */
+    				/** Delivery complete, report this to the simulator! */
     				MailItem deliveryItem = setup.popItem();
-                    delivery.deliver(deliveryItem);
-//                    deliveryCounter++;
-//                    if(deliveryCounter > 2){  // Implies a simulation bug
-//                    	throw new ExcessiveDeliveryException();
-//                    }
-                    /** Check if want to return, i.e. if there is no item in the tube*/
-                    if(isEmpty()){
-                    	changeState(RobotState.RETURNING);
-                    }
-                    else{
-                        /** If there is another item, set the robot's route to the location to deliver the item */
-                        setDestination();
-                        changeState(RobotState.DELIVERING);
-                    }
+    				PermissionManager.getInstance().notifyDelivered(deliveryItem);
+    				delivery.deliver(deliveryItem);
+    				//                    deliveryCounter++;
+    				//                    if(deliveryCounter > 2){  // Implies a simulation bug
+    				//                    	throw new ExcessiveDeliveryException();
+    				//                    }
+    				/** Check if want to return, i.e. if there is no item in the tube*/
+    				if(isEmpty()){
+    					changeState(RobotState.RETURNING);
+    				}
+    				else{
+    					/** If there is another item, set the robot's route to the location to deliver the item */
+    					attemptStartDelivery();
+    				}
     			} else {
-	        		/** The robot is not at the destination yet, move towards it! */
-	                moveTowards(destination_floor);
+    				/** The robot is not at the destination yet, move towards it! */
+    				moveTowards(destination_floor);
     			}
+    			
                 break;
+    		case WAITING_FOR_PERMISSION:
+    			attemptStartDelivery();
+    			break;
+    	}
+    }
+    
+    private void attemptStartDelivery() {
+
+    	if (PermissionManager.getInstance().getDeliveryPermission(setup.getItem())) {
+    		setDestination();
+    		changeState(RobotState.DELIVERING);
+    	} else {
+    		changeState(RobotState.WAITING_FOR_PERMISSION);
     	}
     }
 
@@ -132,6 +143,7 @@ public class Robot {
     private void setDestination() {
         /** Set the destination floor */
         destination_floor = setup.getDestination();
+        PermissionManager.getInstance().notifyDelivering(setup.getItem());
     }
 
     /**

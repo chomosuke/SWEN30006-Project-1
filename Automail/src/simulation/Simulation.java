@@ -4,7 +4,6 @@ import exceptions.ExcessiveDeliveryException;
 import exceptions.ItemTooHeavyException;
 import exceptions.MailAlreadyDeliveredException;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -141,10 +140,6 @@ public class Simulation {
 		NUM_ROBOTS = Integer.parseInt(automailProperties.getProperty("Robots"));
 		System.out.print("#Robots: "); System.out.println(NUM_ROBOTS);
 		
-        // DeliverFood Enable
-		DELIVER_FOOD_ENABLED = Boolean.parseBoolean(automailProperties.getProperty("DeliverFood"));
-        System.out.println("DeliverFood enabled: " + DELIVER_FOOD_ENABLED);
-		
 		assert(NUM_ROBOTS > 0);
 		
 		return automailProperties;
@@ -198,11 +193,7 @@ public class Simulation {
     			
     		}
     		
-    		
     	}
-    	
-    	
-    	
     	
     }
     
