@@ -23,10 +23,10 @@ public class PermissionManager {
 	}
 	
 	public void notifyDelivering(MailItem item) {
+		assert(getDeliveryPermission(item));
 		if (item instanceof FoodItem) {
 			// this ensure that any other robot does not start moving to a destination
 			// floor which currently have a robot delivering food to that floor
-			assert(getDeliveryPermission(item));
 			foodDeliveryHappening[item.getDestFloor() - Building.LOWEST_FLOOR] = (FoodItem) item;
 		}
 	}
