@@ -143,7 +143,6 @@ public class Simulation {
 
         // DeliverFood Enable
 		DELIVER_FOOD_ENABLED = Boolean.parseBoolean(automailProperties.getProperty("DeliverFood"));
-        System.out.println("DeliverFood enabled: " + DELIVER_FOOD_ENABLED);
 
 
 		

@@ -97,28 +97,33 @@ public class Robot {
                 }
                 break;
     		case DELIVERING:
-    				
-    			if(current_floor == destination_floor){ // If already here drop off either way
-    				/** Delivery complete, report this to the simulator! */
-    				MailItem deliveryItem = setup.popItem();
-    				PermissionManager.getInstance().notifyDelivered(deliveryItem);
-    				delivery.deliver(deliveryItem);
-    				//                    deliveryCounter++;
-    				//                    if(deliveryCounter > 2){  // Implies a simulation bug
-    				//                    	throw new ExcessiveDeliveryException();
-    				//                    }
-    				/** Check if want to return, i.e. if there is no item in the tube*/
-    				if(isEmpty()){
-    					changeState(RobotState.RETURNING);
-    				}
-    				else{
-    					/** If there is another item, set the robot's route to the location to deliver the item */
-    					attemptStartDelivery();
-    				}
-    			} else {
-    				/** The robot is not at the destination yet, move towards it! */
-    				moveTowards(destination_floor);
-    			}
+
+    	    	if (PermissionManager.getInstance().getDeliveryPermission(setup.getItem())) {
+	    			if(current_floor == destination_floor){ // If already here drop off either way
+	    				/** Delivery complete, report this to the simulator! */
+	    				MailItem deliveryItem = setup.popItem();
+	    				PermissionManager.getInstance().notifyDelivered(deliveryItem);
+	    				delivery.deliver(deliveryItem);
+	    				//                    deliveryCounter++;
+	    				//                    if(deliveryCounter > 2){  // Implies a simulation bug
+	    				//                    	throw new ExcessiveDeliveryException();
+	    				//                    }
+	    				/** Check if want to return, i.e. if there is no item in the tube*/
+	    				if(isEmpty()){
+	    					changeState(RobotState.RETURNING);
+	    				}
+	    				else{
+	    					/** If there is another item, set the robot's route to the location to deliver the item */
+	    					attemptStartDelivery();
+	    				}
+	    			} else {
+	    				/** The robot is not at the destination yet, move towards it! */
+	    				moveTowards(destination_floor);
+	    			}
+    	    	} else {
+    	    		// when a RegularItem delivery is interrupted by a food item delivery
+    	    		changeState(RobotState.WAITING_FOR_PERMISSION);
+    	    	}
     			
                 break;
     		case WAITING_FOR_PERMISSION:

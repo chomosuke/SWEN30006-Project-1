@@ -14,11 +14,11 @@ public class PermissionManager {
 		return instance;
 	}
 	
-	private boolean[] lockedForDelivery = new boolean[Building.FLOORS];
+	private FoodItem[] foodDeliveryHappening = new FoodItem[Building.FLOORS];
 	public void notifyDelivered(MailItem item) {
 		if (item instanceof FoodItem) {
-			assert(lockedForDelivery[item.getDestFloor() - Building.LOWEST_FLOOR] == true);
-			lockedForDelivery[item.getDestFloor() - Building.LOWEST_FLOOR] = false;
+			assert(foodDeliveryHappening[item.getDestFloor() - Building.LOWEST_FLOOR] == item);
+			foodDeliveryHappening[item.getDestFloor() - Building.LOWEST_FLOOR] = null;
 		}
 	}
 	
@@ -27,12 +27,13 @@ public class PermissionManager {
 			// this ensure that any other robot does not start moving to a destination
 			// floor which currently have a robot delivering food to that floor
 			assert(getDeliveryPermission(item));
-			lockedForDelivery[item.getDestFloor() - Building.LOWEST_FLOOR] = true;
+			foodDeliveryHappening[item.getDestFloor() - Building.LOWEST_FLOOR] = (FoodItem) item;
 		}
 	}
 	
 	public boolean getDeliveryPermission(MailItem item) {
-		return !lockedForDelivery[item.getDestFloor() - Building.LOWEST_FLOOR];
+		return foodDeliveryHappening[item.getDestFloor() - Building.LOWEST_FLOOR] == null // not currently locked
+				|| foodDeliveryHappening[item.getDestFloor() - Building.LOWEST_FLOOR] == item; // already gave permission
 	}
 	
 }
