@@ -143,7 +143,9 @@ public class Simulation {
 
         // DeliverFood Enable
 		DELIVER_FOOD_ENABLED = Boolean.parseBoolean(automailProperties.getProperty("DeliverFood"));
-
+		if (DELIVER_FOOD_ENABLED) {
+			System.out.println("DeliverFood enabled: " + DELIVER_FOOD_ENABLED);
+		}
 
 		
 		
@@ -221,10 +223,14 @@ public class Simulation {
         System.out.printf("Delay: %.2f%n", total_delay);
         if (STATISTICS_ENABLED) {
         	System.out.println("Number of regular items delivered: " + reportDelivery.numberOfRegularItemDelivered);
-        	System.out.println("Number of food items delivered: " + reportDelivery.numberOfFoodItemDelivered);
         	System.out.println("Total weight of the regular items delivered: " + reportDelivery.weightOfRegularItemDelivered);
-        	System.out.println("Total weight of the food items delivered: " + reportDelivery.weightOfFoodItemDelivered);
-        	System.out.println("Number of times a food tube is used: " + mailpool.getNumOfTimesFoodTubeIsAttached());
+        	
+        	if (DELIVER_FOOD_ENABLED) {
+	        	System.out.println("Number of food items delivered: " + reportDelivery.numberOfFoodItemDelivered);
+	        	System.out.println("Total weight of the food items delivered: " + reportDelivery.weightOfFoodItemDelivered);
+	        	System.out.println("Number of times a food tube is used: " + mailpool.getNumOfTimesFoodTubeIsAttached());
+        	}
+        	
         }
     }
     
