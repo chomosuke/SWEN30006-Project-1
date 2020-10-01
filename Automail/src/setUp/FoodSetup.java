@@ -10,7 +10,7 @@ public class FoodSetup extends Setup {
 
     private static final int SETUPTIME = 5;
     private static final int MAXITEMS = 3;
-    private final int initialTime;
+    private int initialTime;
     private final ArrayList<FoodItem> foodTube;
 
     public void loadItem(MailItem item) {
@@ -20,7 +20,6 @@ public class FoodSetup extends Setup {
     }
 
     public FoodSetup() {
-        initialTime = Clock.Time();
         foodTube = new ArrayList<>();
     }
 
@@ -60,6 +59,11 @@ public class FoodSetup extends Setup {
             return foodTube.size();
         }
         return num;
+    }
+    
+    @Override 
+    public void boot() {
+        initialTime = Clock.Time();
     }
 
     @Override

@@ -9,8 +9,13 @@ public abstract class Setup {
 	public abstract boolean isEmpty();
 	public abstract MailItem getItem();
 	public abstract MailItem popItem();
-	public abstract boolean isReady();
 	public abstract int getNumOfItemInTube();
+	
+	public void boot() {} // default do nothing
+	
+	public boolean isReady() {
+		return true; // default always ready
+	}
 	
 	public int getDestination() {
 		MailItem item = getItem();

@@ -60,6 +60,7 @@ public class Robot {
      */
     public void dispatch() {
     	receivedDispatch = true;
+    	setup.boot();
     }
 
     /**
@@ -88,7 +89,7 @@ public class Robot {
     		case WAITING:
                 /** If the StorageTube is ready and the Robot is waiting in the mailroom then start the delivery */
                 if(!isEmpty() && receivedDispatch && setup.isReady()){
-                	// only start delivering when setup is ready and have permission to delivery to that floor
+                	// only start delivering when setup is ready
                 	
                 	receivedDispatch = false;
 //                	deliveryCounter = 0; // reset delivery counter

@@ -54,10 +54,5 @@ public class RegularSetup extends Setup {
 		}
 		return num;
 	}
-
-	@Override
-	public boolean isReady() {
-		return true;
-	}
 	
 }

@@ -5,6 +5,7 @@ Mail receving length: 120
 Overdrive enabled: false
 Statistics enabled: true
 #Robots: 3
+DeliverFood enabled: true
 A Random Seed: 30006
 T:   0 >   R0(0) changed from RETURNING to WAITING
 T:   0 >   R1(0) changed from RETURNING to WAITING
@@ -727,7 +728,7 @@ T: 519 | Simulation complete!
 Final Delivery time: 519
 Delay: 132683.08
 Number of regular items delivered: 94
-Number of food items delivered: 67
 Total weight of the regular items delivered: 88224
+Number of food items delivered: 67
 Total weight of the food items delivered: 60577
 Number of times a food tube is used: 23
