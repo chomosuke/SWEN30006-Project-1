@@ -13,7 +13,7 @@ public class FoodSetup extends Setup {
     private int initialTime;
     private final ArrayList<FoodItem> foodTube;
 
-    public void loadItem(MailItem item) {
+    public void loadItemSetup(MailItem item) {
         if(foodTube.size() < MAXITEMS) {
             foodTube.add((FoodItem) item);
         }

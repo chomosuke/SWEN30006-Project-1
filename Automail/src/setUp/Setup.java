@@ -4,7 +4,7 @@ import automail.MailItem;
 
 public abstract class Setup {
 	
-	public abstract void loadItem(MailItem item);
+	public abstract void loadItemSetup(MailItem item);
 	public abstract boolean isFull();
 	public abstract boolean isEmpty();
 	public abstract MailItem getItem();
