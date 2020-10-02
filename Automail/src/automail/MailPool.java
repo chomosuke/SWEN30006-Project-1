@@ -92,13 +92,13 @@ public class MailPool {
 		//List available robots
 		ListIterator<Robot> i = robots.listIterator();
 		while (i.hasNext() && (!foodItemPool.isEmpty() || !regularItemPool.isEmpty())) 
-			loadItemSetup(i);
+			loadItem(i);
 	}
 	
 	// start with loading regular item and alternate between the two for each robot
 	private boolean lastRegular = true;
 	//load items to the robot
-	private void loadItemSetup(ListIterator<Robot> i) throws ItemTooHeavyException {
+	private void loadItem(ListIterator<Robot> i) throws ItemTooHeavyException {
 		
 		if (lastRegular)
 			loadItemSetup(i, foodItemPool, new FoodSetup());
