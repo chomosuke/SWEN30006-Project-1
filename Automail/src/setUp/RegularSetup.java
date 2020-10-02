@@ -10,7 +10,7 @@ public class RegularSetup extends Setup {
 	private RegularItem tube = null;
 
 	@Override
-	public void loadItemSetup(MailItem item) {
+	public void loadItem(MailItem item) {
 		if (hand == null)
 			hand = (RegularItem) item;
 		else if (tube == null)

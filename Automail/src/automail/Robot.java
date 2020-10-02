@@ -207,7 +207,7 @@ public class Robot {
 		assert(!setup.isFull());
 		MailItem deliveryItem = mailItem;
 		if (deliveryItem.weight > INDIVIDUAL_MAX_WEIGHT) throw new ItemTooHeavyException();
-		setup.loadItemSetup(deliveryItem);
+		setup.loadItem(deliveryItem);
 	}
 
 }
